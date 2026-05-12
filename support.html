@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サポート | CaudexCare（コーデックスケア）</title>
+<meta name="description" content="CaudexCare（コーデックスケア）のサポートページ。よくある質問とお問い合わせ先をご案内します。">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" href="icon-64.png">
+<link rel="apple-touch-icon" href="icon-256.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --moss: #3F5E3F;
+    --moss-dark: #2A4329;
+    --leaf: #7BA76C;
+    --leaf-light: #B4D3A5;
+    --clay: #C18D6E;
+    --cream: #FBF8F1;
+    --cream-warm: #F5EFE2;
+    --ink: #2D2A24;
+    --ink-sub: #6F695E;
+    --border: #E0D9CB;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    color: var(--ink);
+    background-color: var(--cream);
+    line-height: 1.95;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(255, 248, 230, 0.45) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(193, 141, 110, 0.07) 0%, transparent 60%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  a { color: var(--moss); text-decoration: none; }
+  a:hover { opacity: 0.75; }
+  img { max-width: 100%; display: block; }
+
+  header.site {
+    background: rgba(251, 248, 241, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+  }
+  .nav {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    font-family: "Noto Serif JP", serif;
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--moss);
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand img { width: 32px; height: 32px; border-radius: 8px; }
+  .back-link {
+    font-family: "Noto Serif JP", serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-sub);
+  }
+  .back-link:hover { color: var(--moss); opacity: 1; }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 64px 24px 88px;
+  }
+
+  .page-eyebrow {
+    font-family: "Noto Sans JP", sans-serif;
+    color: var(--leaf);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: "Noto Serif JP", serif;
+    font-weight: 600;
+    font-size: clamp(28px, 4vw, 38px);
+    color: var(--moss-dark);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  .meta {
+    color: var(--ink-sub);
+    font-size: 13px;
+    font-style: italic;
+    margin-bottom: 36px;
+  }
+
+  .lang-switch {
+    display: flex;
+    gap: 18px;
+    font-size: 13px;
+    margin-bottom: 32px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .lang-switch a { font-family: "Noto Serif JP", serif; }
+
+  h2 {
+    font-family: "Noto Serif JP", serif;
+    color: var(--moss-dark);
+    font-size: 22px;
+    margin-top: 48px;
+    margin-bottom: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  h3 {
+    color: var(--ink);
+    font-size: 16px;
+    margin-top: 26px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-family: "Noto Sans JP", sans-serif;
+  }
+  p { margin-bottom: 12px; color: var(--ink); font-size: 14.5px; }
+  ul { padding-left: 1.6rem; margin-bottom: 12px; }
+  li { font-size: 14px; line-height: 1.9; }
+  li::marker { color: var(--leaf); }
+
+  .contact-box {
+    background: linear-gradient(180deg, rgba(180, 211, 165, 0.18) 0%, rgba(180, 211, 165, 0.06) 100%);
+    border-left: 3px solid var(--leaf);
+    padding: 20px 24px;
+    margin: 26px 0;
+    border-radius: 4px;
+    font-family: "Noto Serif JP", serif;
+  }
+  .contact-box strong { color: var(--moss-dark); font-weight: 600; }
+
+  hr.section {
+    margin: 56px 0;
+    border: 0;
+    border-top: 1px dashed var(--border);
+    position: relative;
+  }
+  hr.section::after {
+    content: "❋";
+    color: var(--leaf);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--cream);
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  footer {
+    background: var(--moss-dark);
+    color: rgba(251, 248, 241, 0.6);
+    text-align: center;
+    padding: 36px 24px;
+    font-size: 12.5px;
+    border-top: 1px solid rgba(251, 248, 241, 0.1);
+  }
+  footer a { color: rgba(251, 248, 241, 0.85); margin: 0 12px; }
+  footer .footer-mark {
+    color: var(--leaf-light);
+    font-family: "Noto Serif JP", serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="nav">
+    <a class="brand" href="/"><img src="icon-64.png" alt="CaudexCare">CaudexCare</a>
+    <a class="back-link" href="/">← トップへ戻る</a>
+  </div>
+</header>
+
+<main>
+  <div class="page-eyebrow">SUPPORT</div>
+  <h1>CaudexCare サポート</h1>
+  <p class="meta">最終更新日: 2026年5月12日</p>
+
+  <div class="lang-switch">
+    <a href="#ja">日本語</a>
+    <a href="#en">English</a>
+    <a href="https://upthemoon.github.io/caudexcare-privacy/">プライバシーポリシー</a>
+  </div>
+
+  <!-- ============================== JAPANESE ============================== -->
+  <section id="ja">
+    <p>CaudexCare（コーデックスケア）をご利用いただきありがとうございます。本ページでは、よくあるご質問とお問い合わせ先をご案内します。</p>
+
+    <h2>お問い合わせ</h2>
+    <div class="contact-box">
+      不具合のご報告・機能のご要望・新しい植物のリクエスト・その他のご質問は、下記までメールにてご連絡ください。<br>
+      通常24時間以内にご返信いたします（土日祝を除く）。<br><br>
+      <strong>📧 <a href="mailto:support@upthemoon.co.jp">support@upthemoon.co.jp</a></strong>
+    </div>
+
+    <h2>よくあるご質問</h2>
+
+    <h3>Q. iPhone だけで使えますか？</h3>
+    <p>はい、iPhone・iPad に対応しています。Android版・Web版は今後の需要次第で検討中です。</p>
+
+    <h3>Q. 無料プランだけで十分使えますか？</h3>
+    <p>はい、水やり管理・リマインダー・天気連動・育成ガイドはすべて無料でご利用いただけます。プレミアム（¥480/年）はクラウド同期のみ追加機能です。</p>
+
+    <h3>Q. 機種変するとデータは消えますか？</h3>
+    <p>無料プランの場合は端末ローカルに保存しているため、iCloudバックアップから復元するか、新端末で再入力が必要です。プレミアムプランならクラウド同期で自動的に新端末に引き継げます。</p>
+
+    <h3>Q. 水やりの履歴を間違えて記録してしまいました</h3>
+    <p>ホーム画面の植物カードを長押しすると、直近の水やり履歴を1件単位で削除できます。削除後、次回の水やり予定日も自動で再計算されます。</p>
+
+    <h3>Q. リマインド通知が来ません</h3>
+    <p>iPhone「設定」→「通知」→「CaudexCare」で通知が有効になっているかご確認ください。また、アプリ内の「設定」画面でリマインダーのオン/オフと時刻をご確認ください。</p>
+
+    <h3>Q. 天気情報の地域を変更したい</h3>
+    <p>設定タブの「天気の地域」から、GPS自動取得または都道府県の手動選択に切り替えできます。旅行先など一時的な変更にも対応します。</p>
+
+    <h3>Q. リストにない植物を登録したい</h3>
+    <p>植物追加画面で品種名を入力中、候補に表示されない場合は「そのまま登録」を選択できます。新しい品種データの追加リクエストもお気軽にお寄せください（上記メール宛）。</p>
+
+    <h3>Q. 解約・退会したい</h3>
+    <p>プレミアムプランの解約は、iPhone「設定」→「自分の名前」→「サブスクリプション」→「CaudexCare」から行えます。解約後も無料機能は引き続きお使いいただけます（クラウド同期は停止）。</p>
+
+    <h3>Q. アカウントを完全に削除したい</h3>
+    <p>アプリ内の設定タブから「アカウントを削除」を選択すると、サーバー上のデータ（同期データ・認証情報）を完全に削除できます。</p>
+
+    <h2>関連リンク</h2>
+    <ul>
+      <li><a href="https://upthemoon.github.io/caudexcare-privacy/">プライバシーポリシー</a></li>
+      <li><a href="/">CaudexCare 公式サイト</a></li>
+    </ul>
+  </section>
+
+  <hr class="section">
+
+  <!-- ============================== ENGLISH ============================== -->
+  <section id="en">
+    <h2>CaudexCare Support</h2>
+    <p class="meta">Last updated: May 12, 2026</p>
+
+    <p>Thank you for using CaudexCare. This page provides FAQs and contact information.</p>
+
+    <h3>Contact</h3>
+    <div class="contact-box">
+      For bug reports, feature requests, new plant requests, or any other inquiries, please contact us by email.<br>
+      We typically respond within 24 hours (excluding weekends and holidays).<br><br>
+      <strong>📧 <a href="mailto:support@upthemoon.co.jp">support@upthemoon.co.jp</a></strong>
+    </div>
+
+    <h3>Q. Is it iPhone only?</h3>
+    <p>The app supports iPhone and iPad. Android and Web versions are under consideration depending on demand.</p>
+
+    <h3>Q. Is the free plan enough?</h3>
+    <p>Yes. Watering management, reminders, weather integration, and growing guides are all free. Premium (¥480/year) only adds cross-device cloud sync.</p>
+
+    <h3>Q. What happens to my data when I change devices?</h3>
+    <p>On the free plan, data is stored locally on the device. Either restore from iCloud backup or re-enter on the new device. Premium auto-syncs across devices via cloud.</p>
+
+    <h3>Q. I accidentally logged a watering entry. Can I undo it?</h3>
+    <p>Long-press a plant card on the home screen to delete the most recent watering log. The next watering date will be recalculated automatically.</p>
+
+    <h3>Q. I'm not receiving reminder notifications.</h3>
+    <p>Please verify notifications are enabled in iPhone Settings → Notifications → CaudexCare. Also check the reminder settings (on/off and time) inside the app's Settings tab.</p>
+
+    <h3>Q. Can I change the region for weather info?</h3>
+    <p>Yes. In the Settings tab, switch between GPS auto-detection or manual prefecture selection (Japan, 47 prefectures supported).</p>
+
+    <h3>Q. The plant I want isn't in the list.</h3>
+    <p>When entering a plant name, if no match appears, you can choose "Register as-is". You can also request new plant data additions via the email above.</p>
+
+    <h3>Q. How do I cancel my subscription?</h3>
+    <p>Cancel via iPhone Settings → [Your Name] → Subscriptions → CaudexCare. Free features remain usable after cancellation (cloud sync stops).</p>
+
+    <h3>Q. How do I fully delete my account?</h3>
+    <p>From the in-app Settings tab, choose "Delete Account" to fully remove your server-side data (sync data and authentication).</p>
+
+    <h3>Related links</h3>
+    <ul>
+      <li><a href="https://upthemoon.github.io/caudexcare-privacy/">Privacy Policy</a></li>
+      <li><a href="/">CaudexCare official site</a></li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-mark">❋  CaudexCare  ❋</div>
+  <div>
+    <a href="https://upthemoon.github.io/caudexcare-privacy/">プライバシーポリシー</a>
+    <a href="/support.html">サポート</a>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">利用規約</a>
+  </div>
+  <div style="margin-top: 16px;">
+    © 2026 Up the Moon LLC. CaudexCare is a product of Up the Moon LLC.
+  </div>
+</footer>
+
+</body>
+</html>
