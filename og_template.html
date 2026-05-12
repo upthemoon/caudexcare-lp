@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>Caudex Care — OG Image 1200×630</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --moss-deep: #2A4329;
+    --moss: #3F5E3F;
+    --leaf: #7BA76C;
+    --terracotta: #C18D6E;
+    --cream: #FBF8F1;
+    --ink: #2D2A24;
+    --ink-sub: #6F695E;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    width: 1200px;
+    height: 630px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', 'EB Garamond', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .og {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    display: grid;
+    grid-template-columns: 600px 600px;
+    background-color: var(--cream);
+  }
+
+  /* paper texture overlay */
+  .paper-noise {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    z-index: 5;
+  }
+
+  /* faint vignette */
+  .og::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(255, 248, 230, 0.5) 0%, transparent 55%),
+      radial-gradient(ellipse at center, transparent 60%, rgba(120, 95, 60, 0.10) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* central column rule */
+  .col-rule {
+    position: absolute;
+    top: 80px;
+    bottom: 80px;
+    left: 600px;
+    width: 1px;
+    background: rgba(42, 67, 41, 0.18);
+    z-index: 3;
+  }
+  .col-rule::before,
+  .col-rule::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    width: 5px;
+    height: 5px;
+    background: var(--terracotta);
+    transform: rotate(45deg);
+  }
+  .col-rule::before { top: -3px; }
+  .col-rule::after  { bottom: -3px; }
+
+  /* ============================================================
+     LEFT
+     ============================================================ */
+  .left {
+    position: relative;
+    z-index: 2;
+    padding: 60px 48px 60px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .eyebrow {
+    font-family: 'EB Garamond', 'Noto Serif JP', serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 20px;
+    color: var(--moss);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    white-space: nowrap;
+  }
+  .eyebrow .tick {
+    width: 36px;
+    height: 1px;
+    background: var(--moss);
+    opacity: 0.7;
+  }
+
+  .headline {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    color: var(--moss-deep);
+    font-size: 54px;
+    line-height: 1.35;
+    margin: 0;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .meta .sub {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 28px;
+    color: var(--ink-sub);
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+  .meta .tag {
+    font-family: 'EB Garamond', 'Noto Serif JP', serif;
+    font-size: 18px;
+    color: var(--leaf);
+    letter-spacing: 0.2em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+  }
+  .meta .tag .dot {
+    width: 4px;
+    height: 4px;
+    background: var(--leaf);
+    transform: rotate(45deg);
+  }
+
+  /* ============================================================
+     RIGHT — illustration
+     ============================================================ */
+  .right {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 72px;
+  }
+
+  .illus {
+    position: relative;
+    width: 400px;
+    height: 460px;
+  }
+  .illus svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  .caption {
+    margin-top: 18px;
+    font-family: 'EB Garamond', 'Noto Serif JP', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink-sub);
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .caption::before,
+  .caption::after {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--terracotta);
+    opacity: 0.6;
+  }
+
+  /* ============================================================
+     Decorative corner marks
+     ============================================================ */
+  .corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    color: var(--moss-deep);
+    z-index: 4;
+  }
+  .corner.tl { top: 28px;    left: 28px; }
+  .corner.tr { top: 28px;    right: 28px;  transform: rotate(90deg); }
+  .corner.bl { bottom: 28px; left: 28px;   transform: rotate(-90deg); }
+  .corner.br { bottom: 28px; right: 28px;  transform: rotate(180deg); }
+
+  /* outer hairline frame */
+  .frame {
+    position: absolute;
+    inset: 22px;
+    border: 1px solid rgba(42, 67, 41, 0.18);
+    pointer-events: none;
+    z-index: 3;
+  }
+  .frame::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 0.5px solid rgba(193, 141, 110, 0.35);
+  }
+</style>
+</head>
+<body>
+
+<!-- paper noise (1200×630) -->
+<svg class="paper-noise" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" preserveAspectRatio="none" aria-hidden="true">
+  <filter id="paper">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11"/>
+    <feColorMatrix values="0 0 0 0 0.16
+                           0 0 0 0 0.13
+                           0 0 0 0 0.09
+                           0 0 0 1 0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#paper)"/>
+</svg>
+
+<div class="og">
+
+  <!-- decorative hairline frame + corners -->
+  <div class="frame" aria-hidden="true"></div>
+  <svg class="corner tl" viewBox="0 0 22 22" aria-hidden="true">
+    <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+      <line x1="11" y1="2" x2="11" y2="20"/>
+      <line x1="2"  y1="11" x2="20" y2="11"/>
+      <circle cx="11" cy="11" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="18" r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="18" r="0.9" fill="currentColor" stroke="none"/>
+    </g>
+  </svg>
+  <svg class="corner tr" viewBox="0 0 22 22" aria-hidden="true">
+    <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+      <line x1="11" y1="2" x2="11" y2="20"/>
+      <line x1="2"  y1="11" x2="20" y2="11"/>
+      <circle cx="11" cy="11" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="18" r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="18" r="0.9" fill="currentColor" stroke="none"/>
+    </g>
+  </svg>
+  <svg class="corner bl" viewBox="0 0 22 22" aria-hidden="true">
+    <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+      <line x1="11" y1="2" x2="11" y2="20"/>
+      <line x1="2"  y1="11" x2="20" y2="11"/>
+      <circle cx="11" cy="11" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="18" r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="18" r="0.9" fill="currentColor" stroke="none"/>
+    </g>
+  </svg>
+  <svg class="corner br" viewBox="0 0 22 22" aria-hidden="true">
+    <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+      <line x1="11" y1="2" x2="11" y2="20"/>
+      <line x1="2"  y1="11" x2="20" y2="11"/>
+      <circle cx="11" cy="11" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="4"  r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="4"  cy="18" r="0.9" fill="currentColor" stroke="none"/>
+      <circle cx="18" cy="18" r="0.9" fill="currentColor" stroke="none"/>
+    </g>
+  </svg>
+
+  <!-- column divider -->
+  <div class="col-rule" aria-hidden="true"></div>
+
+  <!-- ===== LEFT ===== -->
+  <section class="left">
+    <div class="eyebrow">
+      <span class="tick"></span>
+      <span>Caudex Care</span>
+    </div>
+
+    <h1 class="headline">水やりタイミング、<br/>もう忘れない。</h1>
+
+    <div class="meta">
+      <p class="sub">多肉植物・コーデックスの管理アプリ</p>
+      <p class="tag">
+        <span>App Store</span>
+        <span class="dot"></span>
+        <span>iPhone / iPad 対応</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== RIGHT — illustration ===== -->
+  <section class="right">
+    <div class="illus">
+      <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#2A4329" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+
+          <!-- ground line -->
+          <line x1="60" y1="470" x2="340" y2="470" stroke-width="1" opacity="0.7"/>
+          <line x1="90" y1="476" x2="310" y2="476" stroke-width="0.8" opacity="0.4"/>
+
+          <!-- ===== caudex (bottle / bulb) ===== -->
+          <path d="M120 470
+                   C 80 460, 70 410, 90 370
+                   C 105 340, 130 320, 150 305
+                   C 160 295, 165 280, 170 260
+                   C 175 245, 185 240, 195 240
+                   C 205 240, 215 245, 220 260
+                   C 225 280, 230 295, 240 305
+                   C 260 320, 285 340, 300 370
+                   C 320 410, 310 460, 270 470
+                   C 230 478, 160 478, 120 470 Z"/>
+
+          <!-- caudex surface hatching (sparse, hand-feel) -->
+          <g stroke-width="0.8" opacity="0.7">
+            <path d="M115 400 Q 130 405, 145 400"/>
+            <path d="M110 420 Q 135 426, 160 420"/>
+            <path d="M108 440 Q 140 446, 172 440"/>
+            <path d="M118 458 Q 150 464, 182 458"/>
+            <path d="M250 400 Q 265 405, 280 400"/>
+            <path d="M240 420 Q 265 426, 290 420"/>
+            <path d="M232 440 Q 262 446, 292 440"/>
+            <path d="M222 458 Q 252 464, 282 458"/>
+            <path d="M170 380 Q 195 385, 220 380"/>
+            <path d="M160 408 Q 195 414, 230 408"/>
+            <path d="M155 432 Q 195 438, 235 432"/>
+          </g>
+
+          <!-- highlight indent at neck -->
+          <path d="M165 290 Q 195 296, 225 290" stroke-width="0.8" opacity="0.6"/>
+
+          <!-- ===== stems ===== -->
+          <path d="M180 250 C 175 220, 168 195, 158 170 C 152 155, 150 140, 152 128"/>
+          <path d="M195 240 C 195 210, 198 180, 200 150 C 201 132, 200 118, 198 108"/>
+          <path d="M210 250 C 215 220, 222 195, 234 172 C 242 157, 246 142, 246 130"/>
+
+          <!-- ===== leaves (teardrop / oval) ===== -->
+          <!-- left stem leaves -->
+          <path d="M152 128 C 142 118, 138 108, 144 102 C 152 100, 158 110, 156 122 C 156 126, 154 128, 152 128 Z"/>
+          <path d="M155 158 C 146 154, 142 146, 148 142 C 154 142, 158 148, 158 156 Z" stroke-width="1.2"/>
+
+          <!-- center stem leaves & bud -->
+          <path d="M198 108 C 188 100, 184 88, 192 82 C 200 80, 206 90, 204 102 C 204 106, 202 108, 198 108 Z"/>
+          <path d="M198 108 C 208 100, 212 88, 204 82" stroke-width="0.8" opacity="0.7"/>
+          <!-- small bud at tip -->
+          <path d="M192 82 C 188 76, 190 70, 196 68 C 202 70, 204 76, 200 82 Z" stroke-width="1.3"/>
+
+          <!-- right stem leaves -->
+          <path d="M246 130 C 256 120, 260 110, 254 104 C 246 102, 240 112, 242 124 C 242 128, 244 130, 246 130 Z"/>
+          <path d="M240 160 C 250 156, 254 148, 248 144 C 242 144, 238 150, 238 158 Z" stroke-width="1.2"/>
+
+          <!-- tiny side leaflets on stems -->
+          <path d="M165 200 C 158 198, 154 202, 156 206 C 162 206, 166 204, 165 200 Z" stroke-width="0.9"/>
+          <path d="M226 198 C 233 196, 237 200, 235 204 C 229 204, 225 202, 226 198 Z" stroke-width="0.9"/>
+
+          <!-- tiny dot inflorescences -->
+          <circle cx="196" cy="68"  r="1.4" fill="#2A4329" stroke="none"/>
+          <circle cx="148" cy="98"  r="1.0" fill="#2A4329" stroke="none"/>
+          <circle cx="252" cy="100" r="1.0" fill="#2A4329" stroke="none"/>
+
+          <!-- soil pebbles (geometric, small) -->
+          <g stroke-width="0.9" opacity="0.7">
+            <ellipse cx="100" cy="476" rx="6" ry="2.2"/>
+            <ellipse cx="140" cy="480" rx="4" ry="1.8"/>
+            <ellipse cx="200" cy="482" rx="7" ry="2.4"/>
+            <ellipse cx="260" cy="480" rx="5" ry="1.9"/>
+            <ellipse cx="305" cy="476" rx="6" ry="2.2"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="caption" aria-hidden="true">
+      <span>Pachypodium gracilius</span>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

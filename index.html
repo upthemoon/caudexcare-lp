@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CaudexCare（コーデックスケア） — 多肉植物・コーデックスの管理アプリ</title>
+<meta name="description" content="多肉植物・コーデックス・希少植物のための育成記録アプリ。水やりリマインダー、天気連動ケアアドバイス、105種以上の植物データを内蔵。iPhone/iPad対応・基本無料。">
+<meta property="og:title" content="CaudexCare — 多肉植物・コーデックスの管理アプリ">
+<meta property="og:description" content="水やりタイミング、もう忘れない。天気連動ケア・育成ガイド付き、105種以上の植物DB。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://roygraphy-web.github.io/caudexcare-lp/">
+<meta property="og:image" content="https://roygraphy-web.github.io/caudexcare-lp/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon-64.png">
+<link rel="apple-touch-icon" href="icon-256.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* ボタニカル系パレット */
+    --moss: #3F5E3F;          /* 深い苔色 — 見出し */
+    --moss-dark: #2A4329;     /* 影 */
+    --leaf: #7BA76C;          /* 葉の中間色 — アクセント */
+    --leaf-light: #B4D3A5;    /* 新芽 */
+    --clay: #C18D6E;          /* 素焼きの鉢 */
+    --clay-light: #E8C9B0;
+    --cream: #FBF8F1;         /* 古紙色（背景） */
+    --cream-warm: #F5EFE2;    /* 少し濃いめのクリーム */
+    --ink: #2D2A24;           /* 本文・墨色 */
+    --ink-sub: #6F695E;
+    --border: #E0D9CB;
+    --paper: #FBF8F1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-weight: 400;
+    color: var(--ink);
+    background-color: var(--cream);
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+    /* 既存の温かみグラデを残す */
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(255, 248, 230, 0.45) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(193, 141, 110, 0.07) 0%, transparent 60%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+  }
+  /* 古紙テクスチャ：微細な繊維ノイズ（SVG fractalNoise を multiply） */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    filter: url(#paperNoise);
+    background: rgba(0, 0, 0, 0);
+    opacity: 0.055;
+    mix-blend-mode: multiply;
+  }
+  /* 古紙テクスチャ：ごく薄い茶色斑点 */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.075;
+    mix-blend-mode: multiply;
+    background-image:
+      radial-gradient(ellipse 280px 180px at 12% 18%,  rgba(140,  95,  55, 0.55) 0%, transparent 65%),
+      radial-gradient(ellipse 420px 240px at 78% 32%,  rgba(110,  78,  44, 0.40) 0%, transparent 70%),
+      radial-gradient(ellipse 320px 220px at 28% 78%,  rgba(150, 105,  60, 0.50) 0%, transparent 68%),
+      radial-gradient(ellipse 380px 200px at 88% 86%,  rgba(120,  85,  50, 0.45) 0%, transparent 70%),
+      radial-gradient(ellipse 180px 120px at 55% 50%,  rgba(160, 115,  70, 0.25) 0%, transparent 75%);
+  }
+  .serif { font-family: "Noto Serif JP", serif; font-weight: 500; }
+  a { color: var(--moss); text-decoration: none; transition: opacity 0.2s; }
+  a:hover { opacity: 0.75; }
+  img { max-width: 100%; display: block; }
+
+  /* ヘッダ */
+  header {
+    background: rgba(251, 248, 241, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    font-family: "Noto Serif JP", serif;
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--moss);
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand img { width: 32px; height: 32px; border-radius: 8px; }
+  .cta-mini {
+    background: var(--moss);
+    color: var(--cream) !important;
+    padding: 9px 18px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+  .cta-mini:hover { opacity: 1; background: var(--moss-dark); }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 96px 24px 88px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at top right, rgba(180, 211, 165, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at bottom left, rgba(193, 141, 110, 0.12) 0%, transparent 50%),
+      var(--cream);
+  }
+  .hero-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--moss);
+    padding: 6px 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .hero-tag::before, .hero-tag::after {
+    content: "";
+    width: 28px; height: 1px;
+    background: var(--moss);
+    opacity: 0.4;
+  }
+  .hero h1 {
+    font-family: "Noto Serif JP", serif;
+    font-weight: 700;
+    font-size: clamp(34px, 5.5vw, 58px);
+    color: var(--moss-dark);
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+    margin-bottom: 28px;
+  }
+  .hero h1 .accent {
+    color: var(--leaf);
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 .accent::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -8px;
+    height: 3px;
+    background: var(--leaf-light);
+    border-radius: 2px;
+    opacity: 0.6;
+  }
+  .hero p.lead {
+    font-size: clamp(15px, 1.6vw, 17px);
+    color: var(--ink-sub);
+    margin-bottom: 36px;
+    max-width: 560px;
+    line-height: 2.05;
+  }
+  .cta-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  .btn-primary {
+    background: var(--moss);
+    color: var(--cream);
+    box-shadow: 0 8px 24px rgba(63, 94, 63, 0.25);
+  }
+  .btn-primary:hover {
+    background: var(--moss-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(63, 94, 63, 0.3);
+    opacity: 1;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--moss);
+    border: 1.5px solid var(--moss);
+  }
+  .btn-secondary:hover { background: var(--moss); color: var(--cream); opacity: 1; }
+  .hero-meta { font-size: 13px; color: var(--ink-sub); letter-spacing: 0.04em; }
+  .hero-meta strong { color: var(--moss); }
+
+  /* HERO 右側のボタニカルイラスト */
+  .hero-art {
+    position: relative;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Botanical Plate（Claude Design 製・植物図鑑フレーム） */
+  .botanical-plate {
+    --bp-cream: #FBF8F1;
+    --bp-border: #E0D9CB;
+    --bp-ink-sub: #6F695E;
+    --bp-moss-deep: #2A4329;
+    --bp-terracotta: #C18D6E;
+    --bp-leaf-soft: #B4D3A5;
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    aspect-ratio: 4 / 5;
+    background-color: var(--bp-cream);
+    border: 1px solid var(--bp-border);
+    border-radius: 8px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 14px 36px -18px rgba(45, 42, 36, 0.28),
+      0 4px 10px -6px rgba(45, 42, 36, 0.16);
+    overflow: hidden;
+    font-family: "Noto Serif JP", Georgia, "Times New Roman", serif;
+    color: var(--bp-moss-deep);
+    isolation: isolate;
+  }
+  .botanical-plate .bp-noise {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+    mix-blend-mode: multiply;
+  }
+  .botanical-plate::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 25% 15%, rgba(255, 248, 230, 0.45) 0%, transparent 55%),
+      radial-gradient(ellipse at center, transparent 60%, rgba(120, 95, 60, 0.10) 100%);
+  }
+  .botanical-plate .bp-body {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 60px 1fr auto;
+    padding: 0;
+  }
+  .botanical-plate .bp-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px 0;
+  }
+  .botanical-plate .bp-plate-no {
+    font-family: "Noto Serif JP", Georgia, serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--bp-ink-sub);
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .botanical-plate .bp-rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 80%;
+    max-width: 240px;
+    color: var(--bp-moss-deep);
+  }
+  .botanical-plate .bp-rule .line {
+    flex: 1;
+    height: 1px;
+    background: rgba(42, 67, 41, 0.28);
+  }
+  .botanical-plate .bp-rule svg {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    color: var(--bp-moss-deep);
+  }
+  .botanical-plate .bp-slot {
+    position: relative;
+    margin: 6px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+  .botanical-plate .bp-img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .botanical-plate .bp-img:not([src]),
+  .botanical-plate .bp-img[src=""] { display: none; }
+  .botanical-plate .bp-img[src]:not([src=""]) ~ .bp-placeholder { display: none; }
+  .botanical-plate .bp-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    pointer-events: none;
+  }
+  .botanical-plate .bp-placeholder svg {
+    width: 56%;
+    max-width: 200px;
+    height: auto;
+    color: var(--bp-leaf-soft);
+  }
+  .botanical-plate .bp-placeholder .label {
+    font-family: "Noto Serif JP", Georgia, serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--bp-ink-sub);
+    letter-spacing: 0.04em;
+  }
+  .botanical-plate .bp-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px 22px;
+    /* グローバル footer / header の上書きを潰す */
+    background: transparent;
+    color: var(--bp-moss-deep);
+    border: 0;
+    text-align: center;
+    font-size: inherit;
+  }
+  .botanical-plate .bp-top {
+    background: transparent;
+    border: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .botanical-plate .bp-bottom .bp-rule {
+    width: 70%;
+    max-width: 220px;
+  }
+  .botanical-plate .bp-names {
+    text-align: center;
+    margin: 2px 0 4px;
+  }
+  .botanical-plate .bp-sci {
+    font-family: "Noto Serif JP", Georgia, serif;
+    font-style: italic;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--bp-moss-deep);
+    letter-spacing: 0.01em;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .botanical-plate .bp-jp {
+    font-family: "Noto Serif JP", Georgia, serif;
+    font-size: 11px;
+    color: var(--bp-ink-sub);
+    margin: 4px 0 0;
+    letter-spacing: 0.08em;
+  }
+  .botanical-plate .bp-foot {
+    font-family: "Noto Serif JP", Georgia, serif;
+    font-style: italic;
+    font-size: 10px;
+    color: var(--bp-ink-sub);
+    letter-spacing: 0.16em;
+    margin: 0;
+    opacity: 0.85;
+  }
+  /* 装飾SVG: 浮かぶ葉 */
+  .leaf-deco {
+    position: absolute;
+    color: var(--leaf);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .leaf-deco.l1 { top: 10%; left: 4%; width: 60px; transform: rotate(-20deg); }
+  .leaf-deco.l2 { bottom: 12%; right: 6%; width: 80px; transform: rotate(35deg); color: var(--clay); }
+  .leaf-deco.l3 { top: 50%; left: 48%; width: 42px; transform: rotate(120deg); opacity: 0.25; }
+  @media (max-width: 880px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 36px; text-align: center; }
+    .hero p.lead { margin-left: auto; margin-right: auto; }
+    .cta-row { justify-content: center; }
+    .hero-tag { margin-left: auto; margin-right: auto; }
+  }
+
+  /* セクション共通 */
+  section { padding: 96px 24px; position: relative; }
+  .container { max-width: 1120px; margin: 0 auto; }
+  .section-eyebrow {
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 700;
+    color: var(--leaf);
+    text-align: center;
+    letter-spacing: 0.32em;
+    font-size: 11px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  h2 {
+    font-family: "Noto Serif JP", serif;
+    font-weight: 600;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--moss-dark);
+    text-align: center;
+    margin-bottom: 16px;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--ink-sub);
+    margin-bottom: 56px;
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  /* セクション間の植物挿絵区切り */
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 32px 0;
+    gap: 18px;
+    max-width: 240px;
+    color: var(--leaf);
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* Pain points: 古紙メモ風 */
+  .pain { background: var(--cream-warm); }
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .pain-card {
+    background: var(--paper);
+    border-radius: 4px;
+    padding: 32px 28px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.7) inset,
+      0 10px 30px -10px rgba(45, 42, 36, 0.12);
+    position: relative;
+    transition: transform 0.25s;
+  }
+  .pain-card:hover { transform: translateY(-4px) rotate(-0.5deg); }
+  .pain-card:nth-child(2) { transform: rotate(0.5deg); }
+  .pain-card:nth-child(2):hover { transform: translateY(-4px) rotate(1deg); }
+  .pain-card:nth-child(4) { transform: rotate(-0.3deg); }
+  .pain-card:nth-child(4):hover { transform: translateY(-4px) rotate(-0.8deg); }
+  .pain-card .pain-emoji {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--leaf-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 18px;
+  }
+  .pain-card h3 {
+    font-family: "Noto Serif JP", serif;
+    color: var(--moss-dark);
+    margin-bottom: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+  .pain-card p { color: var(--ink-sub); font-size: 14px; line-height: 1.85; }
+
+  /* Features: 図鑑風レイアウト */
+  .features { background: var(--cream); }
+  .feature-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-bottom: 100px;
+  }
+  .feature-row:last-child { margin-bottom: 0; }
+  .feature-row.reverse { direction: rtl; }
+  .feature-row.reverse > * { direction: ltr; }
+  .feature-num {
+    font-family: "Noto Serif JP", serif;
+    font-size: 14px;
+    color: var(--leaf);
+    letter-spacing: 0.3em;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .feature-text h3 {
+    font-family: "Noto Serif JP", serif;
+    font-size: clamp(22px, 3vw, 28px);
+    color: var(--moss-dark);
+    margin-bottom: 18px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  .feature-text p {
+    color: var(--ink-sub);
+    margin-bottom: 22px;
+    line-height: 2;
+  }
+  .feature-text ul { list-style: none; padding: 0; }
+  .feature-text li {
+    padding: 8px 0 8px 32px;
+    position: relative;
+    color: var(--ink);
+    font-size: 14.5px;
+    line-height: 1.8;
+  }
+  .feature-text li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18px;
+    width: 18px;
+    height: 1px;
+    background: var(--leaf);
+  }
+  .feature-text li::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--leaf-light);
+    border: 1px solid var(--leaf);
+  }
+
+  /* スクショ表示: 図鑑のスタンドフレーム風 */
+  .feature-img {
+    position: relative;
+    max-width: 280px;
+    margin: 0 auto;
+    padding: 18px;
+    background: var(--cream-warm);
+    border-radius: 12px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 30px 60px -20px rgba(45, 42, 36, 0.2);
+  }
+  .feature-img::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    border: 1px dashed rgba(123, 167, 108, 0.35);
+    pointer-events: none;
+  }
+  .feature-img img {
+    width: 100%;
+    border-radius: 28px;
+    display: block;
+    box-shadow: 0 10px 30px rgba(45, 42, 36, 0.2);
+    background: var(--moss-dark);
+  }
+  .feature-caption {
+    font-family: "Noto Serif JP", serif;
+    color: var(--ink-sub);
+    font-size: 11.5px;
+    text-align: center;
+    margin-top: 12px;
+    letter-spacing: 0.15em;
+  }
+  @media (max-width: 880px) {
+    .feature-row { grid-template-columns: 1fr; gap: 40px; margin-bottom: 60px; }
+    .feature-row.reverse { direction: ltr; }
+  }
+
+  /* Pricing */
+  .pricing {
+    background:
+      radial-gradient(ellipse at top, rgba(180, 211, 165, 0.15) 0%, transparent 50%),
+      var(--cream-warm);
+  }
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .price-card {
+    background: var(--paper);
+    border-radius: 4px;
+    padding: 44px 36px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 50px -20px rgba(45, 42, 36, 0.15);
+  }
+  .price-card.recommended {
+    border: 2px solid var(--leaf);
+    transform: translateY(-8px);
+    background: linear-gradient(180deg, var(--paper) 0%, #F4F8EF 100%);
+  }
+  .price-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--leaf);
+    color: var(--cream);
+    padding: 6px 18px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+  .price-name {
+    font-family: "Noto Serif JP", serif;
+    color: var(--ink-sub);
+    font-size: 15px;
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+  .price-amount {
+    font-family: "Noto Serif JP", serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--moss-dark);
+    margin: 12px 0 6px;
+    letter-spacing: 0.02em;
+  }
+  .price-period { color: var(--ink-sub); font-size: 13px; }
+  .price-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 28px;
+    text-align: left;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+  .price-list li {
+    padding: 7px 0 7px 26px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .price-list li::before {
+    content: "❋";
+    color: var(--leaf);
+    position: absolute;
+    left: 0;
+    top: 7px;
+    font-size: 12px;
+  }
+  .price-list li strong { color: var(--moss); }
+
+  /* FAQ */
+  .faq-section { background: var(--cream); }
+  .faq { max-width: 760px; margin: 0 auto; }
+  details {
+    background: var(--paper);
+    border-radius: 4px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px -6px rgba(45, 42, 36, 0.08);
+    transition: box-shadow 0.2s;
+  }
+  details[open] { box-shadow: 0 10px 24px -10px rgba(45, 42, 36, 0.15); }
+  summary {
+    font-family: "Noto Serif JP", serif;
+    font-weight: 500;
+    color: var(--moss-dark);
+    font-size: 15.5px;
+    list-style: none;
+    position: relative;
+    padding-right: 34px;
+    line-height: 1.6;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: "+";
+    position: absolute;
+    right: 0;
+    top: -2px;
+    color: var(--leaf);
+    font-size: 24px;
+    font-weight: 300;
+    transition: transform 0.2s;
+  }
+  details[open] summary::after { content: "−"; }
+  details > p {
+    margin-top: 14px;
+    color: var(--ink-sub);
+    font-size: 14px;
+    line-height: 1.95;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+  }
+
+  /* Contact */
+  .contact-section { background: var(--cream-warm); }
+  .contact {
+    max-width: 560px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 44px;
+    border-radius: 4px;
+    box-shadow: 0 20px 50px -20px rgba(45, 42, 36, 0.15);
+  }
+  .contact label {
+    display: block;
+    font-family: "Noto Serif JP", serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--moss-dark);
+    margin-bottom: 8px;
+    margin-top: 18px;
+    letter-spacing: 0.08em;
+  }
+  .contact input, .contact textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+  }
+  .contact input:focus, .contact textarea:focus {
+    border-color: var(--moss);
+    outline: none;
+    background: var(--paper);
+  }
+  .contact textarea { min-height: 130px; resize: vertical; }
+  .contact button {
+    width: 100%;
+    margin-top: 24px;
+    background: var(--moss);
+    color: var(--cream);
+    border: none;
+    padding: 16px;
+    border-radius: 100px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    transition: background 0.2s;
+  }
+  .contact button:hover { background: var(--moss-dark); }
+
+  /* Final CTA */
+  .cta-final {
+    background: var(--moss-dark);
+    color: var(--cream);
+    text-align: center;
+    padding: 110px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-final::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at top right, rgba(180, 211, 165, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom left, rgba(193, 141, 110, 0.1) 0%, transparent 50%);
+  }
+  .cta-final > * { position: relative; z-index: 1; }
+  .cta-final h2 {
+    color: var(--cream);
+    margin-bottom: 18px;
+  }
+  .cta-final p {
+    color: rgba(251, 248, 241, 0.78);
+    margin: 0 auto 36px;
+    font-size: 15px;
+    line-height: 2;
+    max-width: 560px;
+  }
+  .cta-final .btn-primary {
+    background: var(--leaf);
+    color: var(--cream);
+    box-shadow: 0 10px 30px rgba(123, 167, 108, 0.3);
+  }
+  .cta-final .btn-primary:hover { background: var(--leaf-light); color: var(--moss-dark); }
+
+  /* Footer */
+  footer {
+    background: var(--moss-dark);
+    color: rgba(251, 248, 241, 0.6);
+    text-align: center;
+    padding: 36px 24px;
+    font-size: 12.5px;
+    border-top: 1px solid rgba(251, 248, 241, 0.1);
+  }
+  footer a { color: rgba(251, 248, 241, 0.85); margin: 0 12px; }
+  footer .footer-mark {
+    color: var(--leaf-light);
+    font-family: "Noto Serif JP", serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- 古紙ノイズ用 SVG filter（body::before で参照） -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <defs>
+    <filter id="paperNoise" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.16
+                             0 0 0 0 0.13
+                             0 0 0 0 0.09
+                             0 0 0 1 0"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- Botanical Symbol Library (12 marks, Claude Design) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+
+    <!-- 1. leaf-oval -->
+    <symbol id="leaf-oval" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 6 C 50 20, 50 44, 32 58 C 14 44, 14 20, 32 6 Z"/>
+        <path d="M32 9 L 32 56"/>
+      </g>
+    </symbol>
+
+    <!-- 2. leaf-heart -->
+    <symbol id="leaf-heart" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 58
+                 C 8 44, 6 22, 18 14
+                 C 26 10, 30 16, 32 22
+                 C 34 16, 38 10, 46 14
+                 C 58 22, 56 44, 32 58 Z"/>
+        <path d="M32 22 L 32 56"/>
+      </g>
+    </symbol>
+
+    <!-- 3. leaf-blade (filled) -->
+    <symbol id="leaf-blade" viewBox="0 0 64 64">
+      <path d="M32 5
+               C 38 22, 38 46, 32 59
+               C 26 46, 26 22, 32 5 Z"
+            fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- 4. leaf-fern -->
+    <symbol id="leaf-fern" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 8 C 33 28, 32 46, 32 58"/>
+        <path d="M32 14 C 24 10, 20 12, 18 16"/>
+        <path d="M32 14 C 40 10, 44 12, 46 16"/>
+        <path d="M32 22 C 23 19, 18 22, 16 27"/>
+        <path d="M32 22 C 41 19, 46 22, 48 27"/>
+        <path d="M32 31 C 24 29, 20 32, 19 37"/>
+        <path d="M32 31 C 40 29, 44 32, 45 37"/>
+        <path d="M32 40 C 26 39, 23 42, 22 45"/>
+        <path d="M32 40 C 38 39, 41 42, 42 45"/>
+        <path d="M32 48 C 28 48, 26 50, 25 52"/>
+        <path d="M32 48 C 36 48, 38 50, 39 52"/>
+      </g>
+    </symbol>
+
+    <!-- 5. vine-curl -->
+    <symbol id="vine-curl" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M58 32
+                 A 26 26 0 1 0 6 32
+                 A 22 22 0 1 1 50 32
+                 A 18 18 0 1 0 14 32
+                 A 14 14 0 1 1 42 32
+                 A 10 10 0 1 0 22 32
+                 A 6 6 0 1 1 34 32"/>
+      </g>
+    </symbol>
+
+    <!-- 6. vine-bough (horizontal) -->
+    <symbol id="vine-bough" viewBox="0 0 120 40">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 22 Q 30 14, 60 20 T 116 22"/>
+        <path d="M22 18 C 18 10, 26 8, 28 14 C 28 18, 24 19, 22 18 Z"/>
+        <path d="M48 14 C 44 6, 52 4, 54 10 C 54 14, 50 15, 48 14 Z"/>
+        <path d="M76 18 C 72 10, 80 8, 82 14 C 82 18, 78 19, 76 18 Z"/>
+        <path d="M100 20 C 96 12, 104 10, 106 16 C 106 20, 102 21, 100 20 Z"/>
+        <circle cx="36" cy="24" r="1.1" fill="currentColor" stroke="none"/>
+        <circle cx="90" cy="24" r="1.1" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+
+    <!-- 7. sprout-double -->
+    <symbol id="sprout-double" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 58 L 32 36"/>
+        <path d="M32 36 C 24 30, 18 28, 14 28"/>
+        <path d="M32 36 C 40 30, 46 28, 50 28"/>
+        <path d="M14 28 C 8 22, 10 14, 18 16 C 22 18, 22 24, 18 28 C 16 29, 14 29, 14 28 Z"/>
+        <path d="M50 28 C 56 22, 54 14, 46 16 C 42 18, 42 24, 46 28 C 48 29, 50 29, 50 28 Z"/>
+        <line x1="26" y1="60" x2="38" y2="60" stroke-width="1"/>
+      </g>
+    </symbol>
+
+    <!-- 8. sprout-bud -->
+    <symbol id="sprout-bud" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 58 L 32 26"/>
+        <path d="M32 10
+                 C 26 14, 26 22, 32 26
+                 C 38 22, 38 14, 32 10 Z"/>
+        <path d="M32 38 C 24 36, 20 32, 18 28 C 22 30, 28 32, 32 38" fill="currentColor"/>
+        <line x1="26" y1="60" x2="38" y2="60" stroke-width="1"/>
+      </g>
+    </symbol>
+
+    <!-- 9. cactus-mini (barrel) -->
+    <symbol id="cactus-mini" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 56
+                 C 18 50, 18 22, 22 14
+                 C 26 10, 38 10, 42 14
+                 C 46 22, 46 50, 42 56 Z"/>
+        <path d="M28 18 L 28 52" stroke-width="1"/>
+        <path d="M32 16 L 32 54" stroke-width="1"/>
+        <path d="M36 18 L 36 52" stroke-width="1"/>
+        <g fill="currentColor" stroke="none">
+          <circle cx="28" cy="12" r="0.9"/>
+          <circle cx="32" cy="10" r="0.9"/>
+          <circle cx="36" cy="12" r="0.9"/>
+        </g>
+        <line x1="18" y1="58" x2="46" y2="58" stroke-width="1"/>
+      </g>
+    </symbol>
+
+    <!-- 10. caudex-mini -->
+    <symbol id="caudex-mini" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 50
+                 C 10 42, 12 30, 22 28
+                 C 26 27, 26 22, 28 18
+                 C 30 14, 34 14, 36 18
+                 C 38 22, 38 27, 42 28
+                 C 52 30, 54 42, 48 50
+                 C 44 56, 20 56, 16 50 Z"/>
+        <path d="M30 18 C 28 12, 26 8, 24 6"/>
+        <path d="M34 18 C 36 12, 38 9, 40 8"/>
+        <circle cx="24" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="40" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+        <line x1="12" y1="58" x2="52" y2="58" stroke-width="1"/>
+      </g>
+    </symbol>
+
+    <!-- 11. divider-branch -->
+    <symbol id="divider-branch" viewBox="0 0 120 20">
+      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 10 L 58 10"/>
+        <path d="M62 10 L 118 10"/>
+        <path d="M60 6 L 64 10 L 60 14 L 56 10 Z" fill="currentColor" stroke="none"/>
+        <path d="M48 10 C 44 6, 40 6, 38 8 C 40 10, 44 10, 48 10 Z" fill="currentColor" stroke="none"/>
+        <path d="M72 10 C 76 14, 80 14, 82 12 C 80 10, 76 10, 72 10 Z" fill="currentColor" stroke="none"/>
+        <circle cx="2" cy="10" r="1.1" fill="currentColor" stroke="none"/>
+        <circle cx="118" cy="10" r="1.1" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+
+    <!-- 12. ornament-corner -->
+    <symbol id="ornament-corner" viewBox="0 0 40 40">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4 L 4 22"/>
+        <path d="M4 4 L 22 4"/>
+        <path d="M4 4 Q 14 14, 26 26 T 36 36"/>
+        <path d="M14 14 C 10 14, 8 16, 8 18 C 12 18, 14 16, 14 14 Z" fill="currentColor" stroke="none"/>
+        <path d="M22 22 C 22 26, 24 28, 26 28 C 26 24, 24 22, 22 22 Z" fill="currentColor" stroke="none"/>
+        <circle cx="4" cy="4" r="1.4" fill="currentColor" stroke="none"/>
+        <circle cx="36" cy="36" r="1.1" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+
+  </defs>
+</svg>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#"><img src="icon-64.png" alt="CaudexCare">CaudexCare</a>
+    <a href="#download" class="cta-mini">無料で始める</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <svg class="leaf-deco l1" viewBox="0 0 64 64"><use href="#leaf-heart"/></svg>
+  <svg class="leaf-deco l2" viewBox="0 0 64 64"><use href="#leaf-oval"/></svg>
+  <svg class="leaf-deco l3" viewBox="0 0 64 64"><use href="#sprout-bud"/></svg>
+
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">FOR PLANT LOVERS</div>
+      <h1>水やりタイミング、<br><span class="accent">もう忘れない</span>。</h1>
+      <p class="lead">
+        多肉植物・コーデックスのための小さな育成記録帖。<br>
+        水やりリマインダー、天気に寄り添うケアのヒント、<br>
+        105種以上の植物データ。<br>
+        毎日の世話の相棒に、iPhoneに1つ。
+      </p>
+      <div class="cta-row">
+        <a href="https://apps.apple.com/jp/app/id6764812522" class="btn btn-primary" id="cta-appstore">
+          📱 App Storeで入手
+        </a>
+        <a href="#features" class="btn btn-secondary">機能を見る</a>
+      </div>
+      <p class="hero-meta"><strong>基本機能すべて無料</strong> ・ iPhone/iPad対応 ・ クレカ登録不要</p>
+    </div>
+
+    <!-- Claude Design 製の植物図鑑フレーム + PD銅版画 -->
+    <div class="hero-art">
+      <div class="botanical-plate" id="botanicalPlate">
+
+        <!-- noise overlay -->
+        <svg class="bp-noise" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 400 500">
+          <filter id="bpPaperNoise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="9"/>
+            <feColorMatrix values="0 0 0 0 0.16
+                                   0 0 0 0 0.13
+                                   0 0 0 0 0.09
+                                   0 0 0 1 0"/>
+          </filter>
+          <rect width="100%" height="100%" filter="url(#bpPaperNoise)"/>
+        </svg>
+
+        <div class="bp-body">
+
+          <!-- Top: plate number + decorated rule with leaves -->
+          <header class="bp-top">
+            <p class="bp-plate-no">Plate N<span style="font-size:0.85em">o.</span>&nbsp;001</p>
+            <div class="bp-rule" aria-hidden="true">
+              <span class="line"></span>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 C 1 7, 3 3, 7 2 C 11 3, 13 7, 11 11 C 9 12, 5 12, 3 11 Z"/>
+                <path d="M7 2 L 7 11" stroke-width="0.8"/>
+              </svg>
+              <span class="line" style="max-width:24px;"></span>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 C 1 7, 3 3, 7 2 C 11 3, 13 7, 11 11 C 9 12, 5 12, 3 11 Z"/>
+                <path d="M7 2 L 7 11" stroke-width="0.8"/>
+              </svg>
+              <span class="line"></span>
+            </div>
+          </header>
+
+          <!-- Middle: image slot -->
+          <div class="bp-slot">
+            <img class="bp-img" id="hero-plant-img" data-role="hero-image" src="plate_001.jpg" alt="Pachypodium namaquanum botanical illustration, c. 1779" />
+
+            <!-- placeholder (shown when img src is empty / fails) -->
+            <div class="bp-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 160 180" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="36" y1="142" x2="124" y2="142" stroke-width="1.2" opacity="0.7"/>
+                <path d="M60 142 C 44 138, 36 122, 44 108 C 52 96, 70 92, 80 92 C 90 92, 108 96, 116 108 C 124 122, 116 138, 100 142 Z" fill="currentColor" fill-opacity="0.18"/>
+                <path d="M80 92 C 80 70, 82 50, 80 32"/>
+                <path d="M70 96 C 64 76, 58 58, 54 44"/>
+                <path d="M92 96 C 100 78, 108 60, 110 46"/>
+                <path d="M80 32 C 73 22, 75 12, 82 8 C 89 12, 89 24, 84 32 Z" fill="currentColor" fill-opacity="0.25"/>
+                <path d="M54 44 C 48 36, 48 28, 54 24 C 60 28, 60 38, 58 44 Z" fill="currentColor" fill-opacity="0.25"/>
+                <path d="M110 46 C 116 38, 116 28, 110 24 C 104 28, 104 38, 106 46 Z" fill="currentColor" fill-opacity="0.25"/>
+              </svg>
+              <span class="label">Botanical Plate</span>
+            </div>
+          </div>
+
+          <!-- Bottom: rule + names + foot -->
+          <footer class="bp-bottom">
+            <div class="bp-rule" aria-hidden="true">
+              <span class="line"></span>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 C 1 7, 3 3, 7 2 C 11 3, 13 7, 11 11 C 9 12, 5 12, 3 11 Z"/>
+                <path d="M7 2 L 7 11" stroke-width="0.8"/>
+              </svg>
+              <span class="line" style="max-width:24px;"></span>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 C 1 7, 3 3, 7 2 C 11 3, 13 7, 11 11 C 9 12, 5 12, 3 11 Z"/>
+                <path d="M7 2 L 7 11" stroke-width="0.8"/>
+              </svg>
+              <span class="line"></span>
+            </div>
+
+            <div class="bp-names">
+              <p class="bp-sci" data-role="sci-name">Pachypodium namaquanum</p>
+              <p class="bp-jp" data-role="jp-name">パキポディウム・ナマクアヌム — ハーフメンス</p>
+            </div>
+
+            <p class="bp-foot">From the Caudex Collection</p>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 区切り -->
+<div class="divider">
+  <svg width="120" height="20" viewBox="0 0 120 20" style="color:var(--leaf)"><use href="#divider-branch"/></svg>
+</div>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="container">
+    <div class="section-eyebrow">PROBLEMS</div>
+    <h2>こんな悩み、ありませんか？</h2>
+    <p class="section-sub">多肉・コーデックス栽培の「あるある」</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-emoji">💧</div>
+        <h3>「いつ水あげたっけ？」</h3>
+        <p>コーデックスは水やり頻度が命。記憶に頼ると休眠期にうっかりやらかす。</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-emoji">🌡️</div>
+        <h3>季節と天気でケアが変わる</h3>
+        <p>梅雨・真夏・冬の休眠で対応が違うのに、判断が毎回手探り。</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-emoji">📚</div>
+        <h3>希少種の情報が散らばってる</h3>
+        <p>パキポ、オペルクリカリア、亀甲竜…品種ごとの育て方を毎回ググる手間。</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-emoji">🪴</div>
+        <h3>株が増えると管理がぐちゃぐちゃ</h3>
+        <p>10株超えると「どの子をいつ水やりした」が頭で追えなくなる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 区切り -->
+<div class="divider">
+  <svg width="120" height="20" viewBox="0 0 120 20" style="color:var(--leaf)"><use href="#divider-branch"/></svg>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-eyebrow">FEATURES</div>
+    <h2>CaudexCare が、解決します</h2>
+    <p class="section-sub">3つの主要機能で、毎日の世話がラクになる</p>
+
+    <div class="feature-row">
+      <div class="feature-text">
+        <div class="feature-num">─ 01 ─</div>
+        <h3>水やりリマインダー<br>（複数設定可）</h3>
+        <p>株ごとに水やり間隔を設定。次回タイミングを通知でお知らせ。複数のリマインドを朝・夕など使い分けOK。</p>
+        <ul>
+          <li>株ごとに頻度をカスタム</li>
+          <li>長押しで履歴を1件単位で削除・修正</li>
+          <li>ラベル付きで「朝の水やり」「霧吹き」など使い分け</li>
+        </ul>
+      </div>
+      <div>
+        <div class="feature-img">
+          <img src="screenshots/01_home.png" alt="ホーム画面（水やりリマインダー）" loading="lazy">
+        </div>
+        <div class="feature-caption">— HOME SCREEN —</div>
+      </div>
+    </div>
+
+    <div class="feature-row reverse">
+      <div class="feature-text">
+        <div class="feature-num">─ 02 ─</div>
+        <h3>天気連動<br>ケアアドバイス</h3>
+        <p>GPS または都道府県設定で今日の天気・湿度を取得。雨の日は水やり控えめ・乾燥日は霧吹き、など季節と天候に合わせたヒントを表示。</p>
+        <ul>
+          <li>JMA（気象庁）+ Open-Meteo の湿度補完</li>
+          <li>全47都道府県対応</li>
+          <li>月ごと × カテゴリ別の育成tips</li>
+        </ul>
+      </div>
+      <div>
+        <div class="feature-img">
+          <img src="screenshots/03_detail.png" alt="天気連動ケアアドバイス" loading="lazy">
+        </div>
+        <div class="feature-caption">— CARE ADVICE —</div>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-text">
+        <div class="feature-num">─ 03 ─</div>
+        <h3>105種以上の<br>植物データを内蔵</h3>
+        <p>パキポディウム、アデニウム、オペルクリカリア、亀甲竜など、22カテゴリ・105種以上の品種データを収録。最高管理温度・水やり目安も品種別。</p>
+        <ul>
+          <li>追加時にオートコンプリート候補</li>
+          <li>22カテゴリでフィルタ表示</li>
+          <li>折りたたみ式の育成ガイドカード</li>
+        </ul>
+      </div>
+      <div>
+        <div class="feature-img">
+          <img src="screenshots/04_add.png" alt="植物追加画面（オートコンプリート）" loading="lazy">
+        </div>
+        <div class="feature-caption">— ADD PLANT —</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 区切り -->
+<div class="divider">
+  <svg width="120" height="20" viewBox="0 0 120 20" style="color:var(--leaf)"><use href="#divider-branch"/></svg>
+</div>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-eyebrow">PRICING</div>
+    <h2>料金</h2>
+    <p class="section-sub">基本機能はずっと無料・クラウド同期だけプレミアム</p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name">無料プラン</div>
+        <div class="price-amount">¥0</div>
+        <div class="price-period">永久無料</div>
+        <ul class="price-list">
+          <li>植物登録 無制限</li>
+          <li>水やり・リマインダー</li>
+          <li>天気連動アドバイス</li>
+          <li>育成ガイド全種</li>
+        </ul>
+      </div>
+      <div class="price-card recommended">
+        <div class="price-badge">RECOMMENDED</div>
+        <div class="price-name">プレミアム</div>
+        <div class="price-amount">¥480</div>
+        <div class="price-period">/年（月換算 ¥40）</div>
+        <ul class="price-list">
+          <li>機種変・複数端末で<strong>クラウド同期</strong></li>
+          <li>iCloud バックアップ補完</li>
+          <li>今後のプレミアム機能すべて</li>
+          <li>個人開発を応援</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 区切り -->
+<div class="divider">
+  <svg width="120" height="20" viewBox="0 0 120 20" style="color:var(--leaf)"><use href="#divider-branch"/></svg>
+</div>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-eyebrow">FAQ</div>
+    <h2>よくある質問</h2>
+    <p class="section-sub">使い始める前に、気になるポイント</p>
+    <div class="faq">
+      <details>
+        <summary>iPhone だけで使えますか？</summary>
+        <p>はい、iPhone・iPad に対応しています。Android版・Web版は需要次第で検討中です。</p>
+      </details>
+      <details>
+        <summary>無料プランだけで十分使えますか？</summary>
+        <p>はい、水やり管理・リマインダー・天気連動・育成ガイドはすべて無料で使えます。プレミアム（¥480/年）はクラウド同期だけの違いです。</p>
+      </details>
+      <details>
+        <summary>機種変するとデータは消えますか？</summary>
+        <p>無料プランの場合はローカル保存なので、iCloudバックアップから復元するか、新端末で再入力が必要です。プレミアムプランならクラウド同期で自動的に新端末に引き継げます。</p>
+      </details>
+      <details>
+        <summary>どんな植物に対応していますか？</summary>
+        <p>多肉植物・コーデックス・サボテン・塊根植物・観葉植物まで22カテゴリ、105種以上の品種データを内蔵しています。リストにない品種も自由に登録できます。</p>
+      </details>
+      <details>
+        <summary>天気情報はどこから取得していますか？</summary>
+        <p>気象庁（JMA）のオープンデータと Open-Meteo の湿度データを組み合わせています。全47都道府県対応・無料・広告なしで動作します。</p>
+      </details>
+      <details>
+        <summary>解約方法は？</summary>
+        <p>iPhoneの「設定」→「Apple ID」→「サブスクリプション」からいつでも解約できます。解約後も無料機能は引き続きお使いいただけます（クラウド同期は停止）。</p>
+      </details>
+      <details>
+        <summary>データは安全ですか？</summary>
+        <p>無料プランは端末ローカルのSQLiteに保存。プレミアムプランのクラウド同期は Supabase（暗号化通信）で保管します。プライバシーポリシーは<a href="https://roygraphy-web.github.io/caudexcare-privacy/">こちら</a>。</p>
+      </details>
+      <details>
+        <summary>サポートを受けられますか？</summary>
+        <p>support@upthemoon.co.jp までメールでお問い合わせください。通常24時間以内にご返信いたします。</p>
+      </details>
+      <details>
+        <summary>Apple ID でのサインインは必要ですか？</summary>
+        <p>無料プランの利用にはサインイン不要です。プレミアムプランのクラウド同期を使う時のみ、Apple Sign-In でログインしていただきます。</p>
+      </details>
+      <details>
+        <summary>領収書は発行できますか？</summary>
+        <p>App Store経由のお支払いとなるため、領収書はApple側から発行されます。「設定 &gt; Apple ID &gt; 購入履歴」から確認・PDFダウンロードが可能です。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="section-eyebrow">CONTACT</div>
+    <h2>お問い合わせ</h2>
+    <p class="section-sub">ご質問・要望・不具合報告など、お気軽にどうぞ</p>
+    <form class="contact" action="https://formspree.io/f/xwvywkpw" method="POST">
+      <input type="hidden" name="_subject" value="[CaudexCare LP] お問い合わせ">
+      <label for="name">お名前 <span style="color:#C18D6E">*</span></label>
+      <input type="text" name="name" id="name" required>
+
+      <label for="email">メールアドレス <span style="color:#C18D6E">*</span></label>
+      <input type="email" name="email" id="email" required>
+
+      <label for="message">お問い合わせ内容</label>
+      <textarea name="message" id="message" placeholder="質問・要望・不具合など"></textarea>
+
+      <button type="submit">送信する</button>
+    </form>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final" id="download">
+  <svg class="leaf-deco l1" viewBox="0 0 64 64" style="opacity:0.15"><use href="#leaf-heart"/></svg>
+  <svg class="leaf-deco l2" viewBox="0 0 64 64" style="opacity:0.15; color: var(--leaf-light)"><use href="#leaf-oval"/></svg>
+  <div class="container">
+    <h2>あなたの植物に、<br>毎日のリズムを。</h2>
+    <p>クレカ登録不要・基本機能ぜんぶ無料<br>3分で導入完了</p>
+    <a href="https://apps.apple.com/jp/app/id6764812522" class="btn btn-primary" id="cta-appstore-bottom">
+      📱 App Storeで入手する
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-mark">❋  CaudexCare  ❋</div>
+  <div>
+    <a href="https://roygraphy-web.github.io/caudexcare-privacy/">プライバシーポリシー</a>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">利用規約</a>
+    <a href="mailto:support@upthemoon.co.jp">サポート</a>
+  </div>
+  <div style="margin-top: 16px;">
+    © 2026 Up the Moon LLC. CaudexCare is a product of Up the Moon LLC.
+  </div>
+</footer>
+
+</body>
+</html>
