@@ -513,16 +513,26 @@
   .pain-card:nth-child(2):hover { transform: translateY(-4px) rotate(1deg); }
   .pain-card:nth-child(4) { transform: rotate(-0.3deg); }
   .pain-card:nth-child(4):hover { transform: translateY(-4px) rotate(-0.8deg); }
-  .pain-card .pain-emoji {
+  /* 旧 .pain-emoji の絵文字を 12+4 種の自作 SVG symbol library に統一 (2026-05-21) */
+  .pain-card .pain-icon {
     width: 56px; height: 56px;
     border-radius: 50%;
     background: var(--leaf-light);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
     margin-bottom: 18px;
+    color: var(--moss-dark);
   }
+  .pain-card .pain-icon svg {
+    width: 32px;
+    height: 32px;
+    display: block;
+  }
+  /* 4 カードで微妙にアイコンの色味を変えて画一感を打消 */
+  .pain-card:nth-child(2) .pain-icon { background: rgba(193, 141, 110, 0.22); color: var(--clay); }
+  .pain-card:nth-child(3) .pain-icon { background: rgba(180, 211, 165, 0.55); color: var(--moss); }
+  .pain-card:nth-child(4) .pain-icon { background: rgba(123, 167, 108, 0.22); color: var(--moss-dark); }
   .pain-card h3 {
     font-family: "Noto Serif JP", serif;
     color: var(--moss-dark);
@@ -1042,6 +1052,67 @@
       </g>
     </symbol>
 
+    <!-- 13. pain-droplet (水やり忘れ) — voice: 1.5 stroke, rounded -->
+    <symbol id="pain-droplet" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 8
+                 C 24 22, 18 32, 18 40
+                 C 18 50, 25 56, 32 56
+                 C 39 56, 46 50, 46 40
+                 C 46 32, 40 22, 32 8 Z"/>
+        <path d="M26 38 C 26 44, 28 48, 32 49" stroke-width="1.2"/>
+      </g>
+    </symbol>
+
+    <!-- 14. pain-thermo (季節と天気) -->
+    <symbol id="pain-thermo" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M28 10
+                 C 28 8, 30 6, 32 6
+                 C 34 6, 36 8, 36 10
+                 L 36 42
+                 C 39 44, 41 47, 41 50
+                 C 41 55, 37 58, 32 58
+                 C 27 58, 23 55, 23 50
+                 C 23 47, 25 44, 28 42 Z"/>
+        <circle cx="32" cy="50" r="4" fill="currentColor" stroke="none"/>
+        <line x1="40" y1="16" x2="44" y2="16" stroke-width="1.2"/>
+        <line x1="40" y1="24" x2="44" y2="24" stroke-width="1.2"/>
+        <line x1="40" y1="32" x2="44" y2="32" stroke-width="1.2"/>
+      </g>
+    </symbol>
+
+    <!-- 15. pain-book (情報散らばり) -->
+    <symbol id="pain-book" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 14 L 30 12 L 30 54 L 10 56 Z"/>
+        <path d="M54 14 L 34 12 L 34 54 L 54 56 Z"/>
+        <line x1="32" y1="12" x2="32" y2="54" stroke-width="1.2"/>
+        <line x1="16" y1="22" x2="26" y2="21" stroke-width="1"/>
+        <line x1="16" y1="30" x2="26" y2="29" stroke-width="1"/>
+        <line x1="16" y1="38" x2="26" y2="37" stroke-width="1"/>
+        <line x1="38" y1="21" x2="48" y2="22" stroke-width="1"/>
+        <line x1="38" y1="29" x2="48" y2="30" stroke-width="1"/>
+        <line x1="38" y1="37" x2="48" y2="38" stroke-width="1"/>
+      </g>
+    </symbol>
+
+    <!-- 16. pain-pots (株が増えて管理破綻) — 3 つの素焼き鉢 -->
+    <symbol id="pain-pots" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <!-- left pot (small, tilted) -->
+        <path d="M6 32 L 22 32 L 20 50 L 8 50 Z" transform="rotate(-6 14 41)"/>
+        <path d="M9 24 C 11 22, 13 22, 15 24" stroke-width="1.2" transform="rotate(-6 14 41)"/>
+        <!-- center pot (taller) -->
+        <path d="M24 22 L 40 22 L 38 52 L 26 52 Z"/>
+        <path d="M28 14 C 30 10, 34 10, 36 14" stroke-width="1.2"/>
+        <path d="M31 18 L 33 22" stroke-width="1"/>
+        <!-- right pot (tilted other way) -->
+        <path d="M42 30 L 58 30 L 56 50 L 44 50 Z" transform="rotate(8 50 40)"/>
+        <path d="M46 22 C 48 20, 50 20, 52 22" stroke-width="1.2" transform="rotate(8 50 40)"/>
+      </g>
+    </symbol>
+
   </defs>
 </svg>
 
@@ -1175,22 +1246,22 @@
     <p class="section-sub">多肉・コーデックス栽培の「あるある」</p>
     <div class="pain-grid">
       <div class="pain-card">
-        <div class="pain-emoji">💧</div>
+        <div class="pain-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#pain-droplet"/></svg></div>
         <h3>「いつ水あげたっけ？」</h3>
         <p>コーデックスは水やり頻度が命。記憶に頼ると休眠期にうっかりやらかす。</p>
       </div>
       <div class="pain-card">
-        <div class="pain-emoji">🌡️</div>
+        <div class="pain-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#pain-thermo"/></svg></div>
         <h3>季節と天気でケアが変わる</h3>
         <p>梅雨・真夏・冬の休眠で対応が違うのに、判断が毎回手探り。</p>
       </div>
       <div class="pain-card">
-        <div class="pain-emoji">📚</div>
+        <div class="pain-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#pain-book"/></svg></div>
         <h3>希少種の情報が散らばってる</h3>
         <p>パキポ、オペルクリカリア、亀甲竜…品種ごとの育て方を毎回ググる手間。</p>
       </div>
       <div class="pain-card">
-        <div class="pain-emoji">🪴</div>
+        <div class="pain-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#pain-pots"/></svg></div>
         <h3>株が増えると管理がぐちゃぐちゃ</h3>
         <p>10株超えると「どの子をいつ水やりした」が頭で追えなくなる。</p>
       </div>
