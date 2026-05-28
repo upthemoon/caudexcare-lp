@@ -32,6 +32,7 @@
     --cream: #FBF8F1;         /* 古紙色（背景） */
     --cream-warm: #F5EFE2;    /* 少し濃いめのクリーム */
     --ink: #2D2A24;           /* 本文・墨色 */
+    --ink-primary: #1A1815;   /* stat-pill 等の強調本文 */
     --ink-sub: #6F695E;
     --border: #E0D9CB;
     --paper: #FBF8F1;
@@ -59,7 +60,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 9998;
+    z-index: 0;
     filter: url(#paperNoise);
     background: rgba(0, 0, 0, 0);
     opacity: 0.055;
@@ -71,7 +72,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 9997;
+    z-index: 0;
     opacity: 0.075;
     mix-blend-mode: multiply;
     background-image:
@@ -230,6 +231,35 @@
   .btn-secondary:hover { background: var(--moss); color: var(--cream); opacity: 1; }
   .hero-meta { font-size: 13px; color: var(--ink-sub); letter-spacing: 0.04em; }
   .hero-meta strong { color: var(--moss); }
+
+  /* Hero stat-pill: 差別化事実 (105 種以上の植物 DB) を視覚的に浮かせる */
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--cream-warm);
+    border: 1px solid var(--moss);
+    border-radius: 100px;
+    margin: 8px 0 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-primary);
+    letter-spacing: 0.03em;
+    font-family: "Noto Sans JP", sans-serif;
+  }
+  .stat-pill::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: var(--leaf, var(--moss));
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .stat-pill strong {
+    color: var(--moss-dark, var(--moss));
+    font-weight: 800;
+  }
 
   /* HERO 右側のボタニカルイラスト */
   .hero-art {
@@ -509,6 +539,17 @@
     transition: transform 0.25s;
   }
   .pain-card:hover { transform: translateY(-4px) rotate(-0.5deg); }
+
+  /* prefers-reduced-motion 対応 (アクセシビリティ・ルナ起案 2026-05-28・reviewer 指摘で網羅拡張) */
+  @media (prefers-reduced-motion: reduce) {
+    .pain-card { transition: none; }
+    .pain-card:hover,
+    .pain-card:nth-child(2):hover,
+    .pain-card:nth-child(4):hover {
+      transform: none;
+    }
+    .btn-primary:hover { transform: none; }
+  }
   .pain-card:nth-child(2) { transform: rotate(0.5deg); }
   .pain-card:nth-child(2):hover { transform: translateY(-4px) rotate(1deg); }
   .pain-card:nth-child(4) { transform: rotate(-0.3deg); }
@@ -1138,6 +1179,7 @@
         水やりリマインダー・天気に寄り添うケア・105種以上の植物データ。<br>
         毎日の世話の相棒に、iPhone に1つ。
       </p>
+      <p class="stat-pill"><strong>105 種以上</strong>の植物データベース</p>
       <div class="cta-row">
         <a href="https://apps.apple.com/jp/app/id6764812522" class="btn btn-primary" id="cta-appstore">
           📱 App Storeで入手
@@ -1185,7 +1227,7 @@
 
           <!-- Middle: image slot -->
           <div class="bp-slot">
-            <img class="bp-img" id="hero-plant-img" data-role="hero-image" src="plate_001.jpg" alt="Pachypodium namaquanum botanical illustration, c. 1779" />
+            <img class="bp-img" id="hero-plant-img" data-role="hero-image" src="plate_001.jpg" alt="パキポディウム・ナマクアヌム（ナマクエンセ）の銅版画図版、1779年頃" />
 
             <!-- placeholder (shown when img src is empty / fails) -->
             <div class="bp-placeholder" aria-hidden="true">
@@ -1366,8 +1408,8 @@
       <div class="price-card recommended">
         <div class="price-badge">RECOMMENDED</div>
         <div class="price-name">プレミアム</div>
-        <div class="price-amount">¥480</div>
-        <div class="price-period">/年（月換算 ¥40）</div>
+        <div class="price-amount">¥780</div>
+        <div class="price-period">/年（月換算 ¥65）</div>
         <ul class="price-list">
           <li>機種変・複数端末で<strong>クラウド同期</strong></li>
           <li>iCloud バックアップ補完</li>
@@ -1397,7 +1439,7 @@
       </details>
       <details>
         <summary>無料プランだけで十分使えますか？</summary>
-        <p>はい、水やり管理・リマインダー・天気連動・育成ガイドはすべて無料で使えます。プレミアム（¥480/年）はクラウド同期だけの違いです。</p>
+        <p>はい、水やり管理・リマインダー・天気連動・育成ガイドはすべて無料で使えます。プレミアム（¥780/年）はクラウド同期だけの違いです。</p>
       </details>
       <details>
         <summary>機種変するとデータは消えますか？</summary>
